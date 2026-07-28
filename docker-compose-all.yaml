@@ -1,0 +1,51 @@
+services:
+  app-mysql:
+    image: mysql:8.4
+    container_name: app-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_db
+    ports:
+      - "3320:3306"
+    volumes:
+      - mysql_cars_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  app-cars:
+    image: sebi123q/cars-app:1.0
+    container_name: cars-all-app
+    ports:
+      - "8086:8080"
+    environment:
+      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET_KEY: "asdasdasdasdasd123344asdasdasdasdasasd12321332sadasXYZ0123456789ABCDEF"
+    depends_on:
+      app-mysql:
+        condition: service_healthy
+  
+  app-boats-users :
+    image: sebi123q/boats-users-app:1.0
+    container_name: boats-users-all-app
+    ports:
+      - "8087:8080"
+    environment:
+      DB_URL: jdbc:mysql://boats-users-mysql:3306/boats_users_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET_KEY: "asdasdasdasdasd123344asdasdasdasdasasd12321332sadasXYZ0123456789ABCDEF"
+    depends_on:
+      boats-users-mysql:
+        condition: service_healthy
+
+
+
+volumes:
+  mysql_cars_data:
+  mysql_boats_data:
