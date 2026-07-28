@@ -44,7 +44,32 @@ services:
       app-mysql:
         condition: service_healthy
 
-
+  app-school:
+    image: sebi123q/sebi-school-app:2.0
+    container_name: sebi-school-all-app
+    ports:
+      - "8089:8080"
+    environment:
+      DB_URL: jdbc:mysql://app-mysql:3306/ test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      JPA_SHOW_SQL: "true"
+    depends_on:
+      app-mysql:
+        condition: service_healthy
+    restart: unless-stopped
+        
+  app-solarsyncbroker:
+    image: sebi123q/solarsyncbroker-app:2.0
+    container_name: solarsyncbroker-all-app
+    ports:
+      - "8090:8080"
+    environment:
+      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET_KEY: "dev-only-solarsync-secret-key-please-change-in-prod-0123456789ABCDEF"
+    depends_on:
+      app-mysql:
+        condition: service_healthy         
 
 volumes:
-  mysql_all_data:
+  mysql_cars_data:
