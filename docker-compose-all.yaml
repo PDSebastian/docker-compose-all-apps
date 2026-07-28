@@ -1,75 +1,77 @@
 services:
-  app-mysql:
+  mysql:
     image: mysql:8.4
-    container_name: app-mysql
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test_db
-    ports:
-      - "3320:3306"
     volumes:
-      - mysql_cars_data:/var/lib/mysql
+      - mysql_all_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 20s
+    restart: unless-stopped
 
-  app-cars:
+  cars:
     image: sebi123q/cars-app:1.0
-    container_name: cars-all-app
+    container_name: cars
     ports:
       - "8086:8080"
     environment:
-      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_URL: jdbc:mysql://mysql:3306/cars_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET_KEY: "asdasdasdasdasd123344asdasdasdasdasasd12321332sadasXYZ0123456789ABCDEF"
     depends_on:
-      app-mysql:
+      mysql:
         condition: service_healthy
-  
-  app-boats-users :
+    restart: unless-stopped
+
+  boats-users:
     image: sebi123q/boats-users-app:1.0
-    container_name: boats-users-all-app
+    container_name: boats-users
     ports:
       - "8087:8080"
     environment:
-      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_URL: jdbc:mysql://mysql:3306/boats_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET_KEY: "asdasdasdasdasd123344asdasdasdasdasasd12321332sadasXYZ0123456789ABCDEF"
     depends_on:
-      app-mysql:
+      mysql:
         condition: service_healthy
+    restart: unless-stopped
 
-  app-school:
+  school:
     image: sebi123q/sebi-school-app:2.0
-    container_name: sebi-school-all-app
+    container_name: school
     ports:
       - "8089:8080"
     environment:
-      DB_URL: jdbc:mysql://app-mysql:3306/ test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
-      JPA_SHOW_SQL: "true"
+      DB_URL: jdbc:mysql://mysql:3306/school_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
     depends_on:
-      app-mysql:
+      mysql:
         condition: service_healthy
     restart: unless-stopped
-        
-  app-solarsyncbroker:
+
+  solarsyncbroker:
     image: sebi123q/solarsyncbroker-app:2.0
-    container_name: solarsyncbroker-all-app
+    container_name: solarsyncbroker
     ports:
       - "8090:8080"
     environment:
-      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_URL: jdbc:mysql://mysql:3306/solar_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET_KEY: "dev-only-solarsync-secret-key-please-change-in-prod-0123456789ABCDEF"
     depends_on:
-      app-mysql:
-        condition: service_healthy         
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
-  mysql_cars_data:
+  mysql_all_data:
