@@ -36,16 +36,15 @@ services:
     ports:
       - "8087:8080"
     environment:
-      DB_URL: jdbc:mysql://boats-users-mysql:3306/boats_users_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+      DB_URL: jdbc:mysql://app-mysql:3306/test_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET_KEY: "asdasdasdasdasd123344asdasdasdasdasasd12321332sadasXYZ0123456789ABCDEF"
     depends_on:
-      boats-users-mysql:
+      app-mysql:
         condition: service_healthy
 
 
 
 volumes:
-  mysql_cars_data:
-  mysql_boats_data:
+  mysql_all_data:
